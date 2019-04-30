@@ -8,7 +8,7 @@ class Reastig {
   history: number;
   subscribers: Map<
     string,
-    Array<[Component, (state: object, message: any) => object]>
+    Array<[Component, (state: any, message: any) => any]>
   >;
   messages: Array<[string, any, number]>;
   /**

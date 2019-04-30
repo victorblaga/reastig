@@ -1,6 +1,6 @@
 {
-  "name": "reastig",
-  "version": "1.0.0",
+  "name": "@vicblaga/reastig",
+  "version": "1.0.1",
   "description": "A state management library for typescript react inspired by Apache Kafka",
   "main": "dist/reastig.js",
   "types": "dist/reastig.d.ts",
