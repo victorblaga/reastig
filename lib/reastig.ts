@@ -14,7 +14,7 @@ class Reastig {
   /**
    * @param history how many historic messages to keep: 0 means keep all
    */
-  constructor(history: number = 0) {
+  constructor(history: number = 1) {
     this.offset = -1;
     this.history = history;
     this.subscribers = new Map();
@@ -31,12 +31,11 @@ class Reastig {
   subscribe(
     component: Component,
     topic: string,
-    callback: (state: object, message: any) => object
+    callback: (state: any, message: any) => any
   ) {
     const topicSubscribers = this.subscribers.get(topic) || [];
     topicSubscribers.push([component, callback]);
     this.subscribers.set(topic, topicSubscribers);
-    console.log("Subcribers: ", this.subscribers);
   }
 
   /**
