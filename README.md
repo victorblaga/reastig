@@ -19,10 +19,6 @@ how their state should be updated as a reaction to an event.
 Components update the global application state
 by publishing a message on a topic.
 
-Note that, unlike Apache Kafka, 
-the time-ordered list of events is not persisted
-and events are discarded after they have been processed by the subscribed components.
-
 ## Example
 
 ```jsx

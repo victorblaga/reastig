@@ -4,22 +4,12 @@ interface Component {
 }
 
 class Reastig {
-  offset: number;
-  history: number;
+  count: number = 0;
   subscribers: Map<
     string,
     Array<[Component, (state: any, message: any) => any]>
-  >;
-  messages: Array<[string, any, number]>;
-  /**
-   * @param history how many historic messages to keep: 0 means keep all
-   */
-  constructor(history: number = 1) {
-    this.offset = -1;
-    this.history = history;
-    this.subscribers = new Map();
-    this.messages = [];
-  }
+  > = new Map();
+  lastMessage?: [string, any];
 
   /**
    * Subscribes a component to a topic.
@@ -45,11 +35,8 @@ class Reastig {
    * @param message the message
    */
   send(topic: string, message: any = {}) {
-    this.offset += 1;
-    this.messages.push([topic, message, this.offset]);
-    if (this.history > 0 && this.messages.length > this.history) {
-      this.messages.shift();
-    }
+    this.count += 1;
+    this.lastMessage = [topic, message];
 
     const topicSubscribers = this.subscribers.get(topic) || [];
     topicSubscribers.forEach(subscriber => {
