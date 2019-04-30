@@ -1,0 +1,27 @@
+{
+  "name": "reastig",
+  "version": "1.0.0",
+  "description": "A state management library for typescript react inspired by Apache Kafka",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/victorblaga/reastig.git"
+  },
+  "keywords": [
+    "react",
+    "state-management"
+  ],
+  "author": "Victor Blaga",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/victorblaga/reastig/issues"
+  },
+  "homepage": "https://github.com/victorblaga/reastig#readme",
+  "devDependencies": {
+    "typescript": "^3.4.5"
+  }
+}
