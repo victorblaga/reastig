@@ -1,12 +1,24 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "outDir": "./lib",
+    "target": "es2015",
     "module": "commonjs",
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "removeComments": true,
     "declaration": true,
-    "outDir": "./dist",
-    "strict": true
+    "sourceMap": true,
+    "jsx": "react",
+    "typeRoots": [
+      "index.d.ts",
+      "node_modules/@types"
+    ]
   },
   "include": [
-    "lib/**/*.ts"
+    "./src/**/*.tsx",
+    "./src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
   ]
 }

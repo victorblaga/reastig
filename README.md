@@ -4,62 +4,194 @@ A state management library for (typescript) react inspired by Apache Kafka
 
 ## Instalation
 
-NPM: `npm i @vicblaga/reastig`
+NPM: `npm i reastig`
 
-YARN: `yarn add @vicblaga/reastig`
+YARN: `yarn add reastig`
 
-## Main idea
+## Idea
 
-The global application state is maintained as an time-ordered list of per-topic events.
+`Reastig` conceptually maintains the application state is as a time-ordered list of per-topic events (similar to Apache Kafka).
 
-Components subscribe to one (or more) topics and
-supply a callback (reducer) function that defines
-how their state should be updated as a reaction to an event.
+Components can update the application state by sending messages on a topic.
 
-Components update the global application state
-by publishing a message on a topic.
+Components can updating their internal state by subscribing to a topic and calling a reducer function when a message is received (similar to Redux).
 
 ## Example
 
+### Producer component
+
 ```jsx
-import Reastig from '@vicblaga/reastig';
-import React from 'react';
+import Reastig from "reastig";
+import React from "react";
 
-function CounterButton() {
-  return <button onClick={() => Reastig.send("increase", { by: 1 })}>Increase</button>;
+function OperationsButton({ operation, by }) {
+  return (
+    <div>
+      <button
+        onClick={
+          () =>
+            Reastig.send(
+              operation, // the topic name
+              { by }
+            ) // the message
+        }
+      >
+        {operation} by {by}
+      </button>
+    </div>
+  );
 }
+```
 
-const updateState = function(oldState, message) {
-  return {
-    count: oldState.count + message.by
-  };
-}
+### Consumer class-based component
 
-class App extends React.Component {
+```jsx
+import Reastig from "reastig";
+
+class ClassComponent extends React.Component {
   constructor() {
     super();
-    this.state = {count: 0};
-    Reastig.subscribe(this, "increase", updateState);
+    this.state = { count: 0 };
+  }
+
+  componentDidMount() {
+    // The Reastig.subscribe method produces a subscription id.
+    // This id should be used to unsubscribe during cleanup.
+    this.increaseId = Reastig.subscribe(
+      this, // the component
+      "increase", // the topic name
+      ({ count }, { by }) => ({ count: count + by }) // the reducer = f(old_state, message) => new_state
+    );
+
+    this.decreaseid = Reastig.subscribe(
+      this, // the component
+      "decrease", // the topic name
+      ({ count }, { by }) => ({ count: count - by }) // the reducer = f(old_state, message) => new_state
+    );
+  }
+
+  componentWillUnmount() {
+    Reastig.unsubscribe(
+      "increase", // the topic name
+      this.increaseId // the subscription id (from the subscribe method)
+    );
+    Reastig.unsubscribe(
+      "decrease", // the topic name
+      this.decreaseId // the subscription id (from the subscribe method)
+    );
   }
 
   render() {
     return (
       <div>
-        <span>Current count is: <strong>{this.state.count}</stong></span>
-        <CounterButton />
+        <span>Class count: {this.state.count}</span>
       </div>
     );
   }
 }
 ```
 
-## Compared to Redux
+### Consumer hooks-based component
 
-`Reastig` and `Redux` have the following similarities:
- - The reducer: a pure function that computes the new state: `(oldState, message) => newState`
- - The events: components that want to update the state emit events (called messages in Reastig or actions in Redux)
+Subscribe one state variable to a single topic with the `useSubscription` hook (singular):
 
- `Reastig` and `Redux` are different in the following ways:
- - `Reastig` has no explicit central store (conceptually, the central state is the time-ordered list of events, however these are not persisted, as this is not typically required)
- - `Reastig` reducers are defined by the components themselves
- - `Reastig` integration with `react` is easier and the amount of boilerplate code is reduced: no `connect`, `mapStateToProps` or `mapDispatchToProps`
+```jsx
+import { useSubscription } from "reastig";
+
+function OneTopicHooksComponent() {
+  const count = useSubscription(
+    0, // the initial state
+    "increase", // the topic name
+    (oldCount, { by }) => oldCount + by // the reducer
+  );
+  return (
+    <div>
+      <span>One Topic Hooks count: {count}</span>
+    </div>
+  );
+}
+```
+
+Subscribe one state variable to multiple topics with the `useSubscriptions` hook (plural):
+
+```jsx
+import { useSubscriptions } from "reastig";
+
+function MoreTopicsHooksComponent() {
+  const count = useSubscriptions(
+    0,
+    { topic: "increase", reducer: (oldCount, { by }) => oldCount + by },
+    { topic: "decrease", reducer: (oldCount, { by }) => oldCount - by }
+  );
+
+  return (
+    <div>
+      <span>More Topics Hooks count: {count}</span>
+    </div>
+  );
+}
+```
+
+Subscribe one state variable to all topics with the `useSubscriptionToAll` hook.
+This component will receive all messages from all topics.
+Use this hook if you don't know the topic (or don't care about the topic).
+
+```jsx
+import { useSubscriptionToAll } from "reastig";
+import { List } from "immutable";
+
+function History() {
+  const history = useSubscriptionToAll(List(), (current, message) =>
+    current.push(message)
+  );
+
+  const items = history.map((message, i) => {
+    return <div key={i}>{JSON.stringify(message)}</div>;
+  });
+
+  return (
+    <div>
+      <h4>History of messages ({history.size})</h4>
+      {items}
+    </div>
+  );
+}
+```
+
+**Note**: I'm using an `immutable.js` `List` instead of a JavaScript array `[]` to hold the state (in this example, the history of messages),
+because the reducer has to return a different object instance, 
+in order to trigger a re-render of the component.
+
+If you want to use a JavaScript array, you have to re-write the hook like this:
+
+```jsx
+function History() {
+  const history = useSubscriptionToAll([], (current, message) =>
+    current.push(message); // push the new message
+    return current.slice(0); // return a copy of the list
+  );
+
+  // ... rest of the component
+}
+```
+
+### Putting it all together
+
+```jsx
+import React from "react";
+
+function App() {
+  return (
+    <div className="App">
+      <div>
+        <OperationsButton operation={"increase"} by={2} />
+        <OperationsButton operation={"decrease"} by={3} />
+        <OneTopicHooksComponent />
+        <MoreTopicsHooksComponent />
+        <History />
+        <ClassComponent />
+      </div>
+    </div>
+  );
+}
+```

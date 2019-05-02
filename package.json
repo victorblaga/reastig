@@ -1,12 +1,12 @@
 {
-  "name": "@vicblaga/reastig",
-  "version": "1.0.5",
+  "name": "reastig",
+  "version": "0.0.3",
   "description": "A state management library for typescript react inspired by Apache Kafka",
-  "main": "dist/reastig.js",
-  "types": "dist/reastig.d.ts",
+  "main": "lib/index.js",
   "scripts": {
-    "build": "tsc",
-    "test": "mocha --require ts-node/register test/**/*.ts"
+    "build": "rm -rf ./lib && tsc",
+    "prepare": "npm run build",
+    "test": "mocha -r ts-node/register test/**/*.ts"
   },
   "repository": {
     "type": "git",
@@ -22,12 +22,22 @@
     "url": "https://github.com/victorblaga/reastig/issues"
   },
   "homepage": "https://github.com/victorblaga/reastig#readme",
+  "peerDepencencies": {
+    "react": "16.x"
+  },
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.6",
+    "@types/react": "^16.8.15",
+    "react": "^16.8.6",
     "chai": "^4.2.0",
     "mocha": "^6.1.4",
     "ts-node": "^8.1.0",
+    "tslint": "^5.16.0",
     "typescript": "^3.4.5"
+  },
+  "dependencies": {
+    "@types/uuid": "^3.4.4",
+    "uuid": "^3.3.2"
   }
 }
