@@ -1,6 +1,6 @@
 {
   "name": "reastig",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A state management library for typescript react inspired by Apache Kafka",
   "main": "lib/index.js",
   "scripts": {
@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/victorblaga/reastig#readme",
   "peerDepencencies": {
-    "react": "16.x"
+    "react": ">=16.8"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",

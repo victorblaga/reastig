@@ -87,7 +87,7 @@ class Reastig {
     topicSubscriptions.forEach(subscription => {
       const { component, reducer } = subscription;
       const state = component.state;
-      const newState = JSON.parse(JSON.stringify(reducer(state, message)));
+      const newState = reducer(state, message);
       component.setState(newState);
     });
 
