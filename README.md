@@ -32,8 +32,8 @@ function OperationsButton({ operation, by }) {
           () =>
             Reastig.send(
               operation, // the topic name
-              { by }
-            ) // the message
+              { by } // the message
+            )
         }
       >
         {operation} by {by}
