@@ -10,11 +10,11 @@ YARN: `yarn add reastig`
 
 ## Idea
 
-`Reastig` conceptually maintains the application state is as a time-ordered list of per-topic events (similar to Apache Kafka).
+Reastig maintains the application state as a time-ordered list of per-topic events (similar to Apache Kafka).
 
 Components can update the application state by sending messages on a topic.
 
-Components can updating their internal state by subscribing to a topic and calling a reducer function when a message is received (similar to Redux).
+Components can update their internal state by subscribing to a topic and calling a reducer function when a message is received (similar to Redux).
 
 ## Example
 
