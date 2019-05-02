@@ -1,6 +1,6 @@
 {
   "name": "reastig",
-  "version": "0.0.4",
+  "version": "1.0.0",
   "description": "A state management library for typescript react inspired by Apache Kafka",
   "main": "lib/index.js",
   "scripts": {
