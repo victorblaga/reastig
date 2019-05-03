@@ -12,186 +12,184 @@ YARN: `yarn add reastig`
 
 Reastig maintains the application state as a time-ordered list of per-topic events (similar to Apache Kafka).
 
-Components can update the application state by sending messages on a topic.
+Components update the application state by sending messages to a topic.
 
-Components can update their internal state by subscribing to a topic and calling a reducer function when a message is received (similar to Redux).
+Components update their internal state by subscribing to a topic and calling a reducer function when a message is received.
 
-## Example
+## How it works
 
-### Producer component
+### Produce messages
+
+To produce messages call the `Reastig.send(topic: string, message: any)` method:
+
+```jsx
+import Reastig from "reastig";
+
+Reasting.send("topic-name", { hello: "world" });
+```
+
+Typically, you would do this from a component:
 
 ```jsx
 import Reastig from "reastig";
 import React from "react";
 
-function OperationsButton({ operation, by }) {
+function MyProducerComponent() {
   return (
-    <div>
-      <button
-        onClick={
-          () =>
-            Reastig.send(
-              operation, // the topic name
-              { by }
-            ) // the message
-        }
-      >
-        {operation} by {by}
-      </button>
-    </div>
+    <button onClick={() => Reastig.send("topic-name", { hello: "world" })}>
+      Click me
+    </button>
   );
 }
 ```
 
-### Consumer class-based component
+### Consume messages
+
+To consume messages, call the `Reastig.consume(topic: string, consumer: (message: any) => void): string` method.
+
+To stop consuming messages, call the `Reastig.unsubscribe(topic: string, consumerId: string)` method.
 
 ```jsx
 import Reastig from "reastig";
 
-class ClassComponent extends React.Component {
+const consumer = message => console.log(message);
+const consumerId = Reastig.consume("topic-name", consumer);
+// ... if you no longer need the subscription
+Reastig.unsubscribe("topic-name", consumerId);
+```
+
+Typically, you would do this from a component:
+
+```jsx
+import Reastig from "reastig";
+import React from "react";
+
+class MyComponent extends React.Component {
   constructor() {
     super();
-    this.state = { count: 0 };
+    this.state = {};
   }
 
   componentDidMount() {
-    // The Reastig.subscribe method produces a subscription id.
-    // This id should be used to unsubscribe during cleanup.
-    this.increaseId = Reastig.subscribe(
-      this, // the component
-      "increase", // the topic name
-      ({ count }, { by }) => ({ count: count + by }) // the reducer = f(old_state, message) => new_state
-    );
+    this.consumerId = Reastig.consume("topic-name", this.consumeMessage);
+  }
 
-    this.decreaseid = Reastig.subscribe(
-      this, // the component
-      "decrease", // the topic name
-      ({ count }, { by }) => ({ count: count - by }) // the reducer = f(old_state, message) => new_state
-    );
+  consumeMessage(message) {
+    // consume the message (typically update component state)
+    // ...
+    this.setState(/** new state */);
   }
 
   componentWillUnmount() {
-    Reastig.unsubscribe(
-      "increase", // the topic name
-      this.increaseId // the subscription id (from the subscribe method)
-    );
-    Reastig.unsubscribe(
-      "decrease", // the topic name
-      this.decreaseId // the subscription id (from the subscribe method)
-    );
+    Reastig.unsubscribe("topic-name", this.consumerId);
   }
 
   render() {
-    return (
-      <div>
-        <span>Class count: {this.state.count}</span>
-      </div>
-    );
+    return <div>State: {JSON.stringify(this.state)}</div>;
   }
 }
 ```
 
-### Consumer hooks-based component
-
-Subscribe one state variable to a single topic with the `useSubscription` hook (singular):
+Consuming is also available as a react hook:
 
 ```jsx
-import { useSubscription } from "reastig";
+import { useConsumer } from "reastig";
+import React, { useState } from "react";
 
-function OneTopicHooksComponent() {
-  const count = useSubscription(
-    0, // the initial state
-    "increase", // the topic name
-    (oldCount, { by }) => oldCount + by // the reducer
-  );
-  return (
-    <div>
-      <span>One Topic Hooks count: {count}</span>
-    </div>
-  );
+function MyComponent() {
+  const [state, setState] = useState({});
+  const consumer = message => setState(message);
+  useConsumer("topic-name", consumer);
+
+  return <div>State: {JSON.stringify(state)}</div>;
 }
 ```
 
-Subscribe one state variable to multiple topics with the `useSubscriptions` hook (plural):
+### Update component state
 
-```jsx
-import { useSubscriptions } from "reastig";
+A component typically consumes message in order to update its internal state.
 
-function MoreTopicsHooksComponent() {
-  const count = useSubscriptions(
-    0,
-    { topic: "increase", reducer: (oldCount, { by }) => oldCount + by },
-    { topic: "decrease", reducer: (oldCount, { by }) => oldCount - by }
-  );
+To do this, call the `Reastig.subscribe(component: Component, topic: string, reducer: (oldState: any, message: any) => any)` method.
+Note: `Component` is an object that has the following shape:
 
-  return (
-    <div>
-      <span>More Topics Hooks count: {count}</span>
-    </div>
-  );
+```js
+{
+  state: any,
+  setState: (newState: any) => void
 }
 ```
 
-Subscribe one state variable to all topics with the `useSubscriptionToAll` hook.
-This component will receive all messages from all topics.
-Use this hook if you don't know the topic (or don't care about the topic).
+React class component:
 
 ```jsx
-import { useSubscriptionToAll } from "reastig";
-import { List } from "immutable";
+import Reastig from "reastig";
+import React from "react";
 
-function History() {
-  const history = useSubscriptionToAll(List(), (current, message) =>
-    current.push(message)
-  );
+const reducer = (oldState, message) => {
+  return {
+    oldState: oldState,
+    message: message
+  };
+};
 
-  const items = history.map((message, i) => {
-    return <div key={i}>{JSON.stringify(message)}</div>;
-  });
+class MyComponent extends React.Component {
+  constructor() {
+    super();
+    this.state = {};
+  }
 
-  return (
-    <div>
-      <h4>History of messages ({history.size})</h4>
-      {items}
-    </div>
-  );
+  componentDidMount() {
+    this.consumerId = Reastig.subscribe(this, "topic-name", reducer);
+  }
+
+  componentWillUnmount() {
+    Reastig.unsubscribe("topic-name", this.consumerId);
+  }
+
+  render() {
+    return <div>State: {JSON.stringify(this.state)}</div>;
+  }
 }
 ```
 
-**Note**: I'm using an `immutable.js` `List` instead of a JavaScript array `[]` to hold the state (in this example, the history of messages),
-because the reducer has to return a different object instance, 
-in order to trigger a re-render of the component.
-
-If you want to use a JavaScript array, you have to re-write the hook like this:
-
-```jsx
-function History() {
-  const history = useSubscriptionToAll([], (current, message) =>
-    current.push(message); // push the new message
-    return current.slice(0); // return a copy of the list
-  );
-
-  // ... rest of the component
-}
-```
-
-### Putting it all together
+Subscribing is also available as a react hook:
 
 ```jsx
 import React from "react";
+import { useSubscription } from "reastig";
 
-function App() {
-  return (
-    <div className="App">
-      <div>
-        <OperationsButton operation={"increase"} by={2} />
-        <OperationsButton operation={"decrease"} by={3} />
-        <OneTopicHooksComponent />
-        <MoreTopicsHooksComponent />
-        <History />
-        <ClassComponent />
-      </div>
-    </div>
-  );
+function MyComponent() {
+  const reducer = (oldCount, message) => oldCount + 1;
+  const count = useSubscription(0, "topic-name", reducer);
+
+  return <div>Count is: {count}</div>;
 }
 ```
+
+You can subscribe the same state variable to multiple topics:
+
+```jsx
+import React from "react";
+import { useSubscriptions } from "reastig"; // mind the plural
+
+function MyComponent() {
+  const reducer1 = (oldCount, message) => oldCount + 1;
+  const reducer2 = (oldCount, message) => oldCount - 1;
+  const count = useSubscriptions(
+    0,
+    { topic: "topic-name-1", reducer1 },
+    { topic: "topic-name-2", reducer2 }
+    // ... as many as you want
+  );
+
+  return <div>Count is: {count}</div>;
+}
+```
+
+## Complete example
+
+Check out the [example react project](./example/App.js):
+  - install and run [create-react-app](https://facebook.github.io/create-react-app/docs/getting-started)
+  - `npm install reastig` or `yarn add reastig`
+  - `npm install immutable` or `yarn add immutable`
+  - run the project: `npm start` or `yarn start`

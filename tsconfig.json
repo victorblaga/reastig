@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
     "outDir": "./lib",
-    "target": "es2015",
+    "target": "es6",
     "module": "commonjs",
     "noImplicitAny": true,
     "strictNullChecks": true,
-    "removeComments": true,
+    "removeComments": false,
     "declaration": true,
     "sourceMap": true,
     "jsx": "react",

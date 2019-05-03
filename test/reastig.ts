@@ -17,12 +17,12 @@ describe("Reasig methods", () => {
       (os: any, m: any) => ({})
     );
     expect(id).to.not.be.empty;
-    expect(Reastig.subscriptions).to.have.key("test-subscribes-topic");
-    const topicSubscribers = Reastig.subscriptions.get("test-subscribes-topic");
+    expect(Reastig.consumers).to.have.key("test-subscribes-topic");
+    const topicSubscribers = Reastig.consumers.get("test-subscribes-topic");
     expect(topicSubscribers).to.have.length(1);
 
     Reastig.unsubscribe("test-subscribes-topic", id);
-    expect(Reastig.subscriptions).to.not.have.key("test-subscribes-topic");
+    expect(Reastig.consumers).to.not.have.key("test-subscribes-topic");
   });
 });
 
