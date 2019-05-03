@@ -6,21 +6,21 @@ import { Reducer, TopicAction, Consumer } from "./types";
  * @param topic the topic
  * @param reducer the reducer function
  */
-declare const useSubscription: (initialState: any, topic: string, reducer: Reducer) => any;
+declare const useSubscriber: (initialState: any, topic: string, reducer: Reducer) => any;
 /**
  * React hook for subscribing a state variable to the special ALL topic.
  *
  * @param initialState the initial state
  * @param reducer the reducer function
  */
-declare const useSubscriptionToAll: (initialState: any, reducer: Reducer) => any;
+declare const useSubscriberToAll: (initialState: any, reducer: Reducer) => any;
 /**
  * React hook for subscribing a state variable to multiple topics.
  *
  * @param initialState the initial state
  * @param topicActions the list of topic actions ({topic, reducer} objects)
  */
-declare const useSubscriptions: (initialState: any, ...topicActions: TopicAction[]) => any;
+declare const useSubscribers: (initialState: any, ...topicActions: TopicAction[]) => any;
 /**
  * React hook for registering a consumer of a topic.
  *
@@ -34,4 +34,4 @@ declare const useConsumer: (topic: string, consumer: Consumer) => void;
  * @param consumer the consumer function
  */
 declare const useConsumerOfAll: (consumer: Consumer) => void;
-export { useSubscription, useSubscriptionToAll, useSubscriptions, useConsumer, useConsumerOfAll };
+export { useSubscriber, useSubscriberToAll, useSubscribers, useConsumer, useConsumerOfAll };

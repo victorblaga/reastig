@@ -1,17 +1,17 @@
 import reastig from "./reastig";
 import {
-  useSubscription,
-  useSubscriptionToAll,
-  useSubscriptions,
+  useSubscriber,
+  useSubscriberToAll,
+  useSubscribers,
   useConsumer,
   useConsumerOfAll
 } from "./hooks";
 
 export default reastig;
 export {
-  useSubscription,
-  useSubscriptionToAll,
-  useSubscriptions,
+  useSubscriber,
+  useSubscriberToAll,
+  useSubscribers,
   useConsumer,
   useConsumerOfAll
 };

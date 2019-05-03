@@ -4,7 +4,7 @@ A state management library for (typescript) react inspired by Apache Kafka
 
 ## Instalation
 
-NPM: `npm i reastig`
+NPM: `npm install reastig`
 
 YARN: `yarn add reastig`
 
@@ -107,19 +107,20 @@ function MyComponent() {
 
 ### Update component state
 
-A component typically consumes message in order to update its internal state.
+A component typically consumes message in order to update its internal state with a reducer.
 
-To do this, call the `Reastig.subscribe(component: Component, topic: string, reducer: (oldState: any, message: any) => any)` method.
-Note: `Component` is an object that has the following shape:
+This pattern is available by calling the `Reastig.subscribe(component: Component, topic: string, reducer: (oldState: any, message: any) => any)` method.
 
-```js
+`Component` has the following shape:
+```ts
+interface Component
 {
   state: any,
   setState: (newState: any) => void
 }
 ```
 
-React class component:
+React class component subscribe example:
 
 ```jsx
 import Reastig from "reastig";
@@ -156,11 +157,11 @@ Subscribing is also available as a react hook:
 
 ```jsx
 import React from "react";
-import { useSubscription } from "reastig";
+import { useSubscriber } from "reastig";
 
 function MyComponent() {
   const reducer = (oldCount, message) => oldCount + 1;
-  const count = useSubscription(0, "topic-name", reducer);
+  const count = useSubscriber(0, "topic-name", reducer);
 
   return <div>Count is: {count}</div>;
 }
@@ -170,12 +171,12 @@ You can subscribe the same state variable to multiple topics:
 
 ```jsx
 import React from "react";
-import { useSubscriptions } from "reastig"; // mind the plural
+import { useSubscribers } from "reastig"; // mind the plural
 
 function MyComponent() {
   const reducer1 = (oldCount, message) => oldCount + 1;
   const reducer2 = (oldCount, message) => oldCount - 1;
-  const count = useSubscriptions(
+  const count = useSubscribers(
     0,
     { topic: "topic-name-1", reducer1 },
     { topic: "topic-name-2", reducer2 }

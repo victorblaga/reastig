@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import "./App.css";
 import { List } from "immutable";
 import Reastig, {
-  useSubscription,
-  useSubscriptionToAll,
-  useSubscriptions,
+  useSubscriber,
+  useSubscriberToAll,
+  useSubscribers,
   useConsumer,
   useConsumerOfAll
 } from "reastig";
@@ -58,7 +58,7 @@ function ConsumerHookComponent() {
 }
 
 function OneTopicHooksComponent() {
-  const count = useSubscription(
+  const count = useSubscriber(
     0,
     "increase",
     (oldCount, message) => oldCount + message
@@ -71,7 +71,7 @@ function OneTopicHooksComponent() {
 }
 
 function MoreTopicsHooksComponent() {
-  const count = useSubscriptions(
+  const count = useSubscribers(
     0,
     { topic: "increase", reducer: (oldCount, message) => oldCount + message },
     { topic: "decrease", reducer: (oldCount, message) => oldCount - message }
@@ -123,7 +123,7 @@ function History() {
     const result = current.push(message);
     return result;
   };
-  const history = useSubscriptionToAll(List(), reducer);
+  const history = useSubscriberToAll(List(), reducer);
 
   const items = history.map((message, i) => {
     return <div key={i}>{JSON.stringify(message)}</div>;

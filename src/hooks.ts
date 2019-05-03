@@ -9,7 +9,7 @@ import reastig from "./reastig";
  * @param topic the topic
  * @param reducer the reducer function
  */
-const useSubscription = function(
+const useSubscriber = function(
   initialState: any,
   topic: string,
   reducer: Reducer
@@ -30,8 +30,8 @@ const useSubscription = function(
  * @param initialState the initial state
  * @param reducer the reducer function
  */
-const useSubscriptionToAll = function(initialState: any, reducer: Reducer) {
-  return useSubscription(initialState, reastig.ALL, reducer);
+const useSubscriberToAll = function(initialState: any, reducer: Reducer) {
+  return useSubscriber(initialState, reastig.ALL, reducer);
 };
 
 /**
@@ -40,7 +40,7 @@ const useSubscriptionToAll = function(initialState: any, reducer: Reducer) {
  * @param initialState the initial state
  * @param topicActions the list of topic actions ({topic, reducer} objects)
  */
-const useSubscriptions = function(
+const useSubscribers = function(
   initialState: any,
   ...topicActions: TopicAction[]
 ) {
@@ -91,9 +91,9 @@ const useConsumerOfAll = function(consumer: Consumer) {
 };
 
 export {
-  useSubscription,
-  useSubscriptionToAll,
-  useSubscriptions,
+  useSubscriber,
+  useSubscriberToAll,
+  useSubscribers,
   useConsumer,
   useConsumerOfAll
 };
