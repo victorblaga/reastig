@@ -193,3 +193,4 @@ Check out the [example react project](./example/App.js):
   - `npm install reastig` or `yarn add reastig`
   - `npm install immutable` or `yarn add immutable`
   - run the project: `npm start` or `yarn start`
+  - check out the console in your browser
