@@ -1,6 +1,6 @@
 # reastig
 
-A state management library for (typescript) react inspired by Apache Kafka
+Redux without boilerplate.
 
 ## Instalation
 
@@ -10,11 +10,9 @@ YARN: `yarn add reastig`
 
 ## Idea
 
-Reastig maintains the application state as a time-ordered list of per-topic events (similar to Apache Kafka).
-
-Components update the application state by sending messages to a topic.
-
-Components update their internal state by subscribing to a topic and calling a reducer function when a message is received.
+1. Maintain the application state as a global ordered list of events
+2. Update the application state by sending messages to a topic
+3. Update local component state by subscribing to a topic and calling a reducer function
 
 ## How it works
 
