@@ -51,10 +51,10 @@ const useSubscribers = function(
     topicActions.forEach(topicAction => {
       const subscriptionId = reastig.subscribe(
         component,
-        topicAction.topic,
-        topicAction.reducer
+        topicAction[0],
+        topicAction[1]
       );
-      subscriptions.push([topicAction.topic, subscriptionId]);
+      subscriptions.push([topicAction[0], subscriptionId]);
     });
     return () =>
       subscriptions.forEach(subscriptions =>

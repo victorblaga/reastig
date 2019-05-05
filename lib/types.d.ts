@@ -23,8 +23,5 @@ interface Subscription {
 /**
  * A topic action is a reducer and a topic tuple.
  */
-interface TopicAction {
-    topic: string;
-    reducer: Reducer;
-}
+declare type TopicAction = [string, Reducer];
 export { Component, Reducer, Subscription, TopicAction, Consumer };
