@@ -16,7 +16,7 @@ type Reducer = (oldState: any, message: any) => any;
 type Consumer = (message: any) => void;
 
 /**
- * A subscribption is a reducer and component tuple.
+ * A subscription is a reducer and component tuple.
  */
 interface Subscription {
   component: Component;

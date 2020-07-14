@@ -1,4 +1,4 @@
-import { Reducer, Consumer } from "./types";
+import { Reducer, TopicAction, Consumer } from "./types";
 /**
  * React hook for subscribing a state variable to a single topic.
  *
@@ -20,7 +20,7 @@ declare const useSubscriberToAll: (initialState: any, reducer: Reducer) => any;
  * @param initialState the initial state
  * @param topicActions the list of topic actions ({topic, reducer} objects)
  */
-declare const useSubscribers: (initialState: any, ...topicActions: [string, Reducer][]) => any;
+declare const useSubscribers: (initialState: any, ...topicActions: TopicAction[]) => any;
 /**
  * React hook for registering a consumer of a topic.
  *

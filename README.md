@@ -1,6 +1,6 @@
 # reastig
 
-Redux without boilerplate.
+Event-based state management framework for react applications.
 
 ## Instalation
 
@@ -11,14 +11,14 @@ YARN: `yarn add reastig`
 ## Idea
 
 1. Maintain the application state as a global ordered list of events
-2. Update the application state by sending messages to a topic
-3. Update local component state by subscribing to a topic and calling a reducer function
+2. Components can update the global state by sending a message to a topic
+3. Other components update their local state by subscribing to a topic and calling a reducer function
 
 ## How it works
 
-### Produce messages
+### Produce a message
 
-To produce messages call the `Reastig.send(topic: string, message: any)` method:
+To produce a message call the `Reastig.send(topic: string, message: any)` method:
 
 ```jsx
 import Reastig from "reastig";
@@ -26,7 +26,7 @@ import Reastig from "reastig";
 Reasting.send("topic-name", { hello: "world" });
 ```
 
-Typically, you would do this from a component:
+Typically, you would do this from inside a component:
 
 ```jsx
 import Reastig from "reastig";
@@ -109,7 +109,7 @@ A component typically consumes message in order to update its internal state wit
 
 This pattern is available by calling the `Reastig.subscribe(component: Component, topic: string, reducer: (oldState: any, message: any) => any)` method.
 
-`Component` has the following shape:
+Where the `Component` type's interface matches a react class-based component:
 
 ```ts
 interface Component {
@@ -192,5 +192,6 @@ Check out the examples:
 - [Functionality tour](./example/counter)
 - [TODO app](./example/todo)
 
-Examples were created with the `react-create-app` plugin.
+The examples were created with the `react-create-app` plugin.
+Install the dependencies using `npm install` or `yarn install`.
 Start them with `npm start` or `yarn start`.

@@ -1,5 +1,5 @@
 import { v4 as uuid } from "uuid";
-import { Component, Reducer, Subscription, Consumer } from "./types";
+import { Component, Reducer, Consumer } from "./types";
 import { buildConsumerFromComponentAndReducer } from "./helpers";
 
 class Reastig {
